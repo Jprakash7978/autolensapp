@@ -1,0 +1,240 @@
+.container {
+  min-height: 100vh;
+  padding: 2rem;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.backButton {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.imageContainer {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.illustration {
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.input {
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #333;
+  box-shadow: 0 0 0 1px #33333330;
+}
+
+.nextButton {
+  background-color: #666;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.nextButton:hover {
+  background-color: #555;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .imageContainer img {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .input {
+    background-color: #1a1a1a;
+    border-color: #333;
+    color: white;
+  }
+
+  .input:focus {
+    border-color: #666;
+  }
+
+  .inputGroup label {
+    color: #999;
+  }
+
+  .backButton {
+    color: white;
+  }
+
+  .backButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+} 
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inputGroup label::after {
+  content: '*';
+  color: #ff4444;
+  margin-left: 4px;
+}
+
+.input:invalid {
+  border-color: #ff4444;
+}
+
+.inputError {
+  border-color: #ff4444 !important;
+}
+
+.errorMessage {
+  color: #ff4444;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.verificationText {
+  text-align: center;
+  color: #666;
+  margin: 1rem 0;
+  line-height: 1.5;
+}
+
+.timer {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 1rem 0;
+}
+
+.otpContainer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.otpInput {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.otpInput:focus {
+  outline: none;
+  border-color: #333;
+  box-shadow: 0 0 0 1px #33333330;
+}
+
+@media (max-width: 768px) {
+  .otpContainer {
+    gap: 0.25rem;
+  }
+  
+  .otpInput {
+    width: 35px;
+    height: 35px;
+  }
+} 
+
+.resendButton {
+  background: none;
+  border: none;
+  color: #666;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.resendButton:hover {
+  color: #333;
+}
+
+.loader {
+  text-align: center;
+  color: #666;
+  margin-top: 1rem;
+} 
