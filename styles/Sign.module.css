@@ -64,28 +64,33 @@
 }
 
 .inputGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
-.inputGroup label {
-  font-size: 0.9rem;
-  color: #666;
+.label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #333;
 }
 
 .input {
-  padding: 0.8rem;
+  width: 100%;
+  padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
 }
 
 .input:focus {
-  outline: none;
-  border-color: #333;
-  box-shadow: 0 0 0 1px #33333330;
+  border-color: #007AFF;
+}
+
+.input::placeholder {
+  color: #999;
 }
 
 .nextButton {
@@ -237,4 +242,22 @@
   text-align: center;
   color: #666;
   margin-top: 1rem;
+}
+
+.successMessage {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.successMessage h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+}
+
+@media (prefers-color-scheme: dark) {
+  .successMessage h2 {
+    color: #fff;
+  }
 } 

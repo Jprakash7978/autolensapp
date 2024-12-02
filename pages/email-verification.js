@@ -4,24 +4,34 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import toast, { Toaster } from 'react-hot-toast';
 
-export default function Verification() {
+export default function EmailVerification() {
   const router = useRouter();
-  const { phoneNumber } = router.query;
+  const [signupData, setSignupData] = useState(null);
   const hasInitialized = useRef(false);
   
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [timeLeft, setTimeLeft] = useState(300);
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
   const [serverOTP, setServerOTP] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showResend, setShowResend] = useState(false);
 
-  // Send OTP only once when component mounts
   useEffect(() => {
-    if (!hasInitialized.current && phoneNumber) {
-      hasInitialized.current = true;
-      sendOTP();
+    // Get stored data
+    const data = sessionStorage.getItem('signupData');
+    if (!data) {
+      router.push('/signup');
+      return;
     }
-  }, [phoneNumber]);
+    setSignupData(JSON.parse(data));
+  }, []);
+
+  // Send verification code only once when component mounts
+  useEffect(() => {
+    if (!hasInitialized.current && signupData?.email) {
+      hasInitialized.current = true;
+      sendVerificationCode();
+    }
+  }, [signupData]);
 
   // Timer countdown
   useEffect(() => {
@@ -37,41 +47,42 @@ export default function Verification() {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  const sendOTP = async () => {
+  const sendVerificationCode = async () => {
     if (isLoading) return;
     
     setIsLoading(true);
     setShowResend(false);
     try {
-      const response = await fetch('/api/sendOTP', {
+      const response = await fetch('/api/sendEmailVerification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ phoneNumber }),
+        body: JSON.stringify({ email: signupData?.email }),
       });
 
       const data = await response.json();
       if (data.success) {
         setServerOTP(data.otp);
-        toast.success('OTP sent successfully!');
+        toast.success('Verification code sent successfully!');
       } else {
-        toast.error('Failed to send OTP');
+        toast.error('Failed to send verification code');
         setShowResend(true);
       }
     } catch (error) {
-      toast.error('Error sending OTP');
+      toast.error('Error sending verification code');
       setShowResend(true);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleResendOTP = () => {
+  const handleResendCode = () => {
     setTimeLeft(300);
     setOtp(['', '', '', '', '', '']);
     setServerOTP(null); // Reset serverOTP to trigger new OTP generation
-    sendOTP();
+    hasInitialized.current = false; // Reset initialization flag
+    sendVerificationCode();
   };
 
   // Format time remaining
@@ -83,14 +94,13 @@ export default function Verification() {
 
   // Handle OTP input
   const handleOtpChange = (index, value) => {
-    if (value.length > 1) return; // Prevent multiple digits
-    if (isNaN(value)) return; // Only allow numbers
+    if (value.length > 1) return;
+    if (isNaN(value)) return;
     
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
     
-    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -110,7 +120,7 @@ export default function Verification() {
     }
   };
 
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
     const enteredOTP = otp.join('');
     
@@ -120,18 +130,37 @@ export default function Verification() {
     }
 
     if (parseInt(enteredOTP) === serverOTP) {
-      toast.success('Verification successful!');
-      // Store phone number in sessionStorage
-      sessionStorage.setItem('signupData', JSON.stringify({
-        firstName: router.query.firstName,
-        lastName: router.query.lastName,
-        phoneNumber,
-        phoneVerified: true
-      }));
-      
-      setTimeout(() => {
-        router.push('/email-signup');
-      }, 1500);
+      try {
+        // Update stored data with email verification status
+        const updatedData = { ...signupData, emailVerified: true };
+        sessionStorage.setItem('signupData', JSON.stringify(updatedData));
+        
+        // Save user data to database
+        const response = await fetch('/api/saveUser', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: signupData.firstName,
+            lastName: signupData.lastName,
+            phoneNumber: signupData.phoneNumber,
+            email: signupData.email
+          }),
+        });
+
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to save user data');
+        }
+
+        toast.success('Email verified successfully!');
+        setTimeout(() => {
+          router.push('/signup-success');
+        }, 1500);
+      } catch (error) {
+        toast.error(error.message || 'Error completing signup');
+      }
     } else {
       toast.error('Invalid verification code');
     }
@@ -146,8 +175,8 @@ export default function Verification() {
 
       <div className={styles.imageContainer}>
         <Image
-          src="/verify.png"
-          alt="Verification illustration"
+          src="/email-verify.png"
+          alt="Email verification illustration"
           width={280}
           height={200}
           priority
@@ -155,10 +184,12 @@ export default function Verification() {
         />
       </div>
 
-      <p className={styles.verificationText}>
-        Enter the code from the sms we<br />
-        sent you on {phoneNumber}
-      </p>
+      {signupData && (
+        <p className={styles.verificationText}>
+          Enter the code from the email<br />
+          we sent to {signupData.email}
+        </p>
+      )}
 
       <div className={styles.timer}>
         {timeLeft > 0 ? formatTime(timeLeft) : "00:00"}
@@ -188,14 +219,14 @@ export default function Verification() {
 
       {showResend && !isLoading && (
         <button 
-          onClick={handleResendOTP}
+          onClick={handleResendCode}
           className={styles.resendButton}
         >
           Resend verification code
         </button>
       )}
 
-      {isLoading && <div className={styles.loader}>Sending OTP...</div>}
+      {isLoading && <div className={styles.loader}>Sending verification code...</div>}
     </div>
   );
 } 
