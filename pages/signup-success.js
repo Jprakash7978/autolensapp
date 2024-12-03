@@ -18,7 +18,7 @@ export default function SignupSuccess() {
   const handleContinue = () => {
     // Clear signup data and redirect to dashboard
     sessionStorage.removeItem('signupData');
-    router.push('/dashboard');
+    router.push('/login');
   };
 
   return (

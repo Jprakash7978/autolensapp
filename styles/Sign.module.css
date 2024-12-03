@@ -261,3 +261,9 @@
     color: #fff;
   }
 } 
+
+.hint {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 4px;
+} 

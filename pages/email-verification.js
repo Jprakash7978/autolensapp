@@ -145,7 +145,8 @@ export default function EmailVerification() {
             firstName: signupData.firstName,
             lastName: signupData.lastName,
             phoneNumber: signupData.phoneNumber,
-            email: signupData.email
+            email: signupData.email,
+            password: signupData.password
           }),
         });
 

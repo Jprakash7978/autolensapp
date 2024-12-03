@@ -51,9 +51,9 @@ export default function Home() {
               <Link href="/signup" className={styles.signupButton}>
                 Sign up
               </Link>
-              <button className={styles.loginButton}>
+              <Link href="/login" className={styles.loginButton}>
                 Log in
-              </button>
+              </Link>
             </div>
           </div>
         )}

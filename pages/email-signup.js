@@ -7,6 +7,8 @@ import toast, { Toaster } from 'react-hot-toast';
 export default function EmailSignup() {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -23,6 +25,11 @@ export default function EmailSignup() {
     return regex.test(email);
   };
 
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
+    return regex.test(password);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -31,16 +38,27 @@ export default function EmailSignup() {
       return;
     }
 
+    if (!validatePassword(password)) {
+      toast.error('Password must be at least 8 characters long, contain 1 capital letter and 1 special character');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // Get existing data and add email
+      // Get existing data and add email and password
       const signupData = JSON.parse(sessionStorage.getItem('signupData'));
       signupData.email = email;
+      signupData.password = password; // We'll hash this on the server side
       sessionStorage.setItem('signupData', JSON.stringify(signupData));
       
       router.push('/email-verification');
     } catch (error) {
-      toast.error('Failed to process email');
+      toast.error('Failed to process signup');
       setIsLoading(false);
     }
   };
@@ -73,6 +91,35 @@ export default function EmailSignup() {
             onChange={(e) => setEmail(e.target.value)}
             className={styles.input}
             placeholder="Enter your email"
+            required
+          />
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label htmlFor="password" className={styles.label}>Password</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={styles.input}
+            placeholder="Create password"
+            required
+          />
+          <small className={styles.hint}>
+            Must be at least 8 characters with 1 capital letter and 1 special character
+          </small>
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label htmlFor="confirmPassword" className={styles.label}>Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className={styles.input}
+            placeholder="Confirm password"
             required
           />
         </div>
