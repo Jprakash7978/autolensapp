@@ -1,3 +1,4 @@
+import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -11,19 +12,17 @@ export default function Login() {
   const router = useRouter();
 
   const handleLogin = async () => {
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
+    const res = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
     });
 
-    if (response.ok) {
+    if (res?.error) {
+      toast.error('Invalid email or password');
+    } else {
       toast.success('Login successful');
       router.push('/dashboard');
-    } else {
-      toast.error('Invalid email or password');
     }
   };
 

@@ -1,34 +1,56 @@
-import pool from '@/utils/db';
-import bcrypt from 'bcrypt';
+// pages/login.js
+import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
 
-  const { email, password } = req.body;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    const connection = await pool.getConnection();
-    const [users] = await connection.query('SELECT * FROM user WHERE email = ?', [email]);
+    const res = await signIn('credentials', {
+      redirect: false, // Don't redirect automatically
+      email,
+      password,
+    });
 
-    if (users.length === 0) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+    if (res?.error) {
+      setError('Invalid email or password');
+    } else {
+      // Redirect user on successful login
+      router.push('/dashboard'); // Redirect to the dashboard or home page
     }
+  };
 
-    const user = users[0];
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-
-    // Set session or token here for authentication
-    // Example: req.session.user = user;
-
-    res.status(200).json({ message: 'Login successful' });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-} 
+  return (
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        {error && <p>{error}</p>}
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  );
+}

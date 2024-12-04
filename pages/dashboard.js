@@ -1,22 +1,28 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+// pages/dashboard.js
+import { getSession } from 'next-auth/react';
 
-export default function Dashboard() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Check if user is authenticated
-    const isAuthenticated = true; // Replace with actual authentication check
-
-    if (!isAuthenticated) {
-      router.push('/login'); // Redirect to login if not authenticated
-    }
-  }, []);
-
+export default function Dashboard({ user }) {
   return (
     <div>
-      <h2>Dashboard</h2>
-      {/* Dashboard content */}
+      <h2>Welcome, {user.name}</h2>
+      <p>Your email is: {user.email}</p>
     </div>
   );
-} 
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { user: session.user },
+  };
+}
