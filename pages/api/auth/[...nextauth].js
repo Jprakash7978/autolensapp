@@ -30,9 +30,7 @@ export default NextAuth({
             return null; // Invalid password
           }
 
-          // Return user object to create session
           return { id: user.id, email: user.email, name: user.name };
-
         } catch (error) {
           console.error('Error in NextAuth authorize:', error);
           return null;
@@ -41,11 +39,15 @@ export default NextAuth({
     }),
   ],
   pages: {
-    signIn: '/login', // You can specify the login page if you have a custom one
-    error: '/auth/error', // Custom error page (optional)
+    signIn: '/login',
+    error: '/auth/error',
   },
   session: {
-    strategy: 'jwt', // Use JWTs for session management
+    strategy: 'jwt',
+    maxAge: 60 * 60, // 1 hour
+  },
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -65,5 +67,5 @@ export default NextAuth({
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET, // Optional: Add a secret for JWT signing
+  secret: process.env.NEXTAUTH_SECRET,
 });

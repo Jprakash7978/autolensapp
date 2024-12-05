@@ -1,0 +1,108 @@
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.carList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.carItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.carDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.carYear {
+  font-weight: bold;
+}
+
+.addButton {
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.addButton:hover {
+  background-color: #d0d0d0;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.modal h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+.modal p {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.modal button {
+  margin: 5px;
+  padding: 10px 20px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.modal button:hover {
+  background-color: #005bb5;
+}
+
+.modal button.cancel {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.modal button.cancel:hover {
+  background-color: #c0c0c0;
+} 
